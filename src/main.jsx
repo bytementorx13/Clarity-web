@@ -5,6 +5,7 @@ import './styles.css'
 
 const types = ['Display Only', 'Portfolio — Basic Contact Form', 'Portfolio — WhatsApp Lead Integration', 'Management System — Backend + DB']
 const blank = {name:'',category:types[0],description:'',cost:'',design:'',code:'',people:['Sumit','Shree'],status:'Open',due:''}
+const API_BASE = import.meta.env.DEV ? '' : (import.meta.env.VITE_API_URL || 'https://clarity-server-rtvb.onrender.com').replace(/\/$/, '')
 const money = n => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n || 0)
 const date = d => d ? new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',year:'numeric'}).format(new Date(`${d}T12:00:00`)) : 'Not set'
 const days = (d) => {
@@ -41,7 +42,8 @@ function Deadline({client}) {
 function Field({label,value,onChange,select,options,textarea,type='text',placeholder,required}) { return <label className="field"><span>{label}</span>{select?<select value={value} onChange={e=>onChange(e.target.value)}>{options.map(x=><option key={x}>{x}</option>)}</select>:textarea?<textarea value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} required={required}/>:<input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} required={required}/>}</label> }
 
 async function apiFetch(url, options = {}) {
-  const response = await fetch(url, {
+  const target = url.startsWith('http') ? url : `${API_BASE}${url}`
+  const response = await fetch(target, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   })
